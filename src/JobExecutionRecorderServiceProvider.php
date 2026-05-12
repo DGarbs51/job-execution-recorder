@@ -38,9 +38,15 @@ class JobExecutionRecorderServiceProvider extends ServiceProvider
                 __DIR__.'/../config/job-execution-recorder.php' => config_path('job-execution-recorder.php'),
             ], 'job-execution-recorder-config');
 
-            $this->publishesMigrations([
-                __DIR__.'/../database/migrations' => database_path('migrations'),
-            ]);
+            if (method_exists($this, 'publishesMigrations')) {
+                $this->publishesMigrations([
+                    __DIR__.'/../database/migrations' => database_path('migrations'),
+                ]);
+            } else {
+                $this->publishes([
+                    __DIR__.'/../database/migrations' => database_path('migrations'),
+                ], 'job-execution-recorder-migrations');
+            }
 
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/job-execution-recorder'),
