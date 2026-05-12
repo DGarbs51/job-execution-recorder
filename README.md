@@ -2,6 +2,11 @@
 
 Job Execution Recorder is a small Laravel package that records queue execution lifecycle events (`processing`, `processed`, `failed`) into a `job_executions` table for monitoring.
 
+## Supported Versions
+
+- Laravel `10.x`, `11.x`, `12.x`, and `13.x`
+- PHP `8.2+`
+
 ## What It Includes
 
 - Queue event listener registration via `JobExecutionRecorderServiceProvider`
