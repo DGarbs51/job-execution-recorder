@@ -12,11 +12,24 @@
             "DGarbs51\\JobExecutionRecorder\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "tests/Fixtures/App/",
+            "DGarbs51\\JobExecutionRecorder\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "DGarbs51\\JobExecutionRecorder\\JobExecutionRecorderServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.1",
+        "phpunit/phpunit": "^13.1"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

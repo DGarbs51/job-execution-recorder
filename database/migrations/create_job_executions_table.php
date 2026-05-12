@@ -8,11 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('job_executions')) {
+        $schema = $this->schema();
+
+        if ($schema->hasTable('job_executions')) {
             return;
         }
 
-        Schema::create('job_executions', function (Blueprint $table) {
+        $schema->create('job_executions', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('job_class');
             $table->string('job_class_short');
@@ -34,11 +36,20 @@ return new class extends Migration
             $table->index(['job_class_short', 'started_at']);
             $table->index(['queue', 'started_at']);
             $table->index(['status', 'started_at']);
+            $table->index(['message_group', 'started_at']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('job_executions');
+        $this->schema()->dropIfExists('job_executions');
+    }
+
+    private function schema()
+    {
+        $connection = env('JOB_EXECUTION_DB_CONNECTION', env('DB_CONNECTION'));
+        $resolvedConnection = is_string($connection) && $connection !== '' ? $connection : null;
+
+        return Schema::connection($resolvedConnection ?? config('database.default'));
     }
 };

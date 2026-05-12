@@ -1,0 +1,71 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
+
+jobs:
+  phpunit:
+    name: "PHP ${{ matrix.php }} • Laravel ${{ matrix.laravel }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+        laravel: ['10', '11', '12', '13']
+        exclude:
+          - php: '8.2'
+            laravel: '13'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: mbstring, sqlite3, pdo_sqlite
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Select test dependency versions
+        run: |
+          case "${{ matrix.laravel }}" in
+            "10")
+              echo "TESTBENCH_VERSION=^8.0" >> "$GITHUB_ENV"
+              echo "PHPUNIT_VERSION=^10.0" >> "$GITHUB_ENV"
+              ;;
+            "11")
+              echo "TESTBENCH_VERSION=^9.0" >> "$GITHUB_ENV"
+              echo "PHPUNIT_VERSION=^11.0" >> "$GITHUB_ENV"
+              ;;
+            "12")
+              echo "TESTBENCH_VERSION=^10.0" >> "$GITHUB_ENV"
+              echo "PHPUNIT_VERSION=^12.0" >> "$GITHUB_ENV"
+              ;;
+            "13")
+              echo "TESTBENCH_VERSION=^11.0" >> "$GITHUB_ENV"
+              echo "PHPUNIT_VERSION=^13.0" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "Unsupported Laravel version: ${{ matrix.laravel }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Install matrix dependencies
+        run: |
+          composer require --no-interaction --no-update \
+            "illuminate/support:^${{ matrix.laravel }}.0" \
+            "orchestra/testbench:${TESTBENCH_VERSION}" \
+            "phpunit/phpunit:${PHPUNIT_VERSION}"
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run test suite
+        run: vendor/bin/phpunit

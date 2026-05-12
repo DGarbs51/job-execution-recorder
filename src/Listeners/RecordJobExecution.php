@@ -44,7 +44,7 @@ class RecordJobExecution
             $queuedAt = $createdAt ? Carbon::createFromTimestamp($createdAt) : null;
             $waitMs = $queuedAt ? (int) round($queuedAt->diffInMilliseconds($now)) : null;
 
-            $execution = JobExecution::create([
+            $execution = $this->jobExecutionQuery()->create([
                 'job_class' => $jobClass,
                 'job_class_short' => class_basename($jobClass),
                 'queue' => $event->job->getQueue(),
@@ -107,7 +107,7 @@ class RecordJobExecution
         $executionId = static::$executionMap[$uuid];
         unset(static::$executionMap[$uuid]);
 
-        $execution = JobExecution::find($executionId);
+        $execution = $this->jobExecutionQuery()->find($executionId);
         if (! $execution) {
             return;
         }
@@ -159,5 +159,13 @@ class RecordJobExecution
         $group = $decoded->messageGroup ?? (method_exists($decoded, 'messageGroup') ? $decoded->messageGroup() : null);
 
         return is_string($group) && $group !== '' ? $group : null;
+    }
+
+    private function jobExecutionQuery()
+    {
+        $connection = config('job-execution-recorder.database_connection');
+        $resolvedConnection = is_string($connection) && $connection !== '' ? $connection : null;
+
+        return $resolvedConnection ? JobExecution::on($resolvedConnection) : JobExecution::query();
     }
 }
