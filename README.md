@@ -12,7 +12,7 @@ Job Execution Recorder is a small Laravel package that records queue execution l
 
 ```bash
 composer require dgarbs51/job-execution-recorder
-php artisan vendor:publish --provider="Drew\JobExecutionRecorder\JobExecutionRecorderServiceProvider"
+php artisan vendor:publish --provider="DGarbs51\JobExecutionRecorder\JobExecutionRecorderServiceProvider"
 php artisan migrate
 ```
 

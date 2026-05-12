@@ -1,8 +1,8 @@
 <?php
 
-namespace Drew\JobExecutionRecorder;
+namespace DGarbs51\JobExecutionRecorder;
 
-use Drew\JobExecutionRecorder\Listeners\RecordJobExecution;
+use DGarbs51\JobExecutionRecorder\Listeners\RecordJobExecution;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;

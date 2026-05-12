@@ -9,13 +9,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Drew\\JobExecutionRecorder\\": "src/"
+            "DGarbs51\\JobExecutionRecorder\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Drew\\JobExecutionRecorder\\JobExecutionRecorderServiceProvider"
+                "DGarbs51\\JobExecutionRecorder\\JobExecutionRecorderServiceProvider"
             ]
         }
     }

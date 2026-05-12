@@ -1,6 +1,6 @@
 <?php
 
-namespace Drew\JobExecutionRecorder\Listeners;
+namespace DGarbs51\JobExecutionRecorder\Listeners;
 
 use App\Enums\JobExecutionStatus;
 use App\Models\JobExecution;
