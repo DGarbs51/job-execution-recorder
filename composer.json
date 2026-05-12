@@ -1,0 +1,22 @@
+{
+    "name": "dgarbs51/job-execution-recorder",
+    "description": "Laravel listener package for recording queue job execution metrics.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Drew\\JobExecutionRecorder\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Drew\\JobExecutionRecorder\\JobExecutionRecorderServiceProvider"
+            ]
+        }
+    }
+}
