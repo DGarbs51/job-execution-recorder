@@ -134,11 +134,6 @@ class RecordJobExecution
     private function resolveMessageGroup(mixed $job): ?string
     {
         $payload = $job->payload();
-        $payloadGroup = $payload['messageGroup'] ?? $payload['message_group'] ?? null;
-
-        if (is_string($payloadGroup) && $payloadGroup !== '') {
-            return $payloadGroup;
-        }
 
         $command = $payload['data']['command'] ?? null;
         if (! is_string($command) || $command === '') {
@@ -152,13 +147,22 @@ class RecordJobExecution
         } finally {
             restore_error_handler();
         }
+
         if (! is_object($decoded)) {
             return null;
         }
 
-        $group = $decoded->messageGroup ?? (method_exists($decoded, 'messageGroup') ? $decoded->messageGroup() : null);
+        $group = property_exists($decoded, 'messageGroup') ? $decoded->messageGroup : null;
 
-        return is_string($group) && $group !== '' ? $group : null;
+        if (! is_string($group) || $group === '') {
+            $group = method_exists($decoded, 'messageGroup') ? $decoded->messageGroup() : null;
+        }
+
+        if (is_string($group) && $group !== '') {
+            return $group;
+        }
+
+        return null;
     }
 
     private function jobExecutionQuery()
