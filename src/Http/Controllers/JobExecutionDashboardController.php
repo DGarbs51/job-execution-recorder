@@ -2,6 +2,7 @@
 
 namespace DGarbs51\JobExecutionRecorder\Http\Controllers;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -34,7 +35,7 @@ class JobExecutionDashboardController extends Controller
         ]);
     }
 
-    private function buildSummary(Carbon $since, ?string $jobFilter, ?string $messageGroupFilter): array
+    private function buildSummary(CarbonInterface $since, ?string $jobFilter, ?string $messageGroupFilter): array
     {
         $stats = $this->filteredQuery($since, $jobFilter, $messageGroupFilter)
             ->whereIn('status', ['succeeded', 'failed'])
@@ -58,7 +59,7 @@ class JobExecutionDashboardController extends Controller
         ];
     }
 
-    private function buildQueueStats(Carbon $since, ?string $jobFilter, ?string $messageGroupFilter): array
+    private function buildQueueStats(CarbonInterface $since, ?string $jobFilter, ?string $messageGroupFilter): array
     {
         return $this->filteredQuery($since, $jobFilter, $messageGroupFilter)
             ->whereIn('status', ['succeeded', 'failed'])
@@ -82,7 +83,7 @@ class JobExecutionDashboardController extends Controller
             ->all();
     }
 
-    private function buildJobStats(Carbon $since, ?string $jobFilter, ?string $messageGroupFilter): array
+    private function buildJobStats(CarbonInterface $since, ?string $jobFilter, ?string $messageGroupFilter): array
     {
         return $this->filteredQuery($since, $jobFilter, $messageGroupFilter)
             ->whereIn('status', ['succeeded', 'failed'])
@@ -106,7 +107,7 @@ class JobExecutionDashboardController extends Controller
             ->all();
     }
 
-    private function buildMessageGroupStats(Carbon $since, ?string $jobFilter, ?string $messageGroupFilter): array
+    private function buildMessageGroupStats(CarbonInterface $since, ?string $jobFilter, ?string $messageGroupFilter): array
     {
         return $this->filteredQuery($since, $jobFilter, $messageGroupFilter)
             ->whereNotNull('message_group')
@@ -193,7 +194,7 @@ class JobExecutionDashboardController extends Controller
             ->all();
     }
 
-    private function filteredQuery(?Carbon $since, ?string $jobFilter, ?string $messageGroupFilter): Builder
+    private function filteredQuery(?CarbonInterface $since, ?string $jobFilter, ?string $messageGroupFilter): Builder
     {
         return $this->table()
             ->when($since !== null, fn (Builder $query) => $query->where('started_at', '>=', $since))
@@ -213,7 +214,7 @@ class JobExecutionDashboardController extends Controller
         return is_string($connection) && $connection !== '' ? $connection : null;
     }
 
-    private function resolveSince(string $range): Carbon
+    private function resolveSince(string $range): CarbonInterface
     {
         return match ($range) {
             '5m' => now()->subMinutes(5),

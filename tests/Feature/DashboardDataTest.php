@@ -3,8 +3,10 @@
 namespace DGarbs51\JobExecutionRecorder\Tests\Feature;
 
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use DGarbs51\JobExecutionRecorder\Tests\TestCase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -45,6 +47,28 @@ class DashboardDataTest extends TestCase
             ->assertOk()
             ->assertSee('Message Groups')
             ->assertSee('group-a');
+    }
+
+    public function test_dashboard_renders_when_app_uses_carbon_immutable(): void
+    {
+        Date::use(CarbonImmutable::class);
+
+        try {
+            config()->set('job-execution-recorder.dashboard.allowed_emails', ['allowed@example.com']);
+
+            $this->insertExecution([
+                'job_class' => 'App\\Jobs\\SyncOrders',
+                'job_class_short' => 'SyncOrders',
+                'queue' => 'orders',
+                'message_group' => null,
+            ]);
+
+            $this->actingAs(new User(['email' => 'allowed@example.com']));
+
+            $this->get('/jobs/execution/dashboard')->assertOk();
+        } finally {
+            Date::useDefault();
+        }
     }
 
     public function test_dashboard_supports_exact_message_group_filtering(): void
